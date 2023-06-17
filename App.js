@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
@@ -11,6 +11,9 @@ import { useEffect, useState } from "react";
 import LoadingScreen from "./src/screens/LoadingScreen";
 import * as Font from "expo-font";
 import RegisterScreen from "./src/screens/Auth/Register/RegisterScreen";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { NativeBaseProvider } from "native-base";
+import SelectScreen from "./src/screens/SelectScreen";
 
 const Stack = createStackNavigator();
 const deviceWidth = Dimensions.get("window").width;
@@ -38,22 +41,36 @@ export default function App() {
 
   if (fontsReady) {
     return (
-      <View style={[styles.container, { backgroundColor: bgValue }]}>
-        <Provider store={store}>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false}}>
-              <Stack.Screen name="Register" component={RegisterScreen} initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }} />
-              <Stack.Screen name="Login" component={LoginScreen} initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }} />
-              <Stack.Screen name="Home" component={HomeScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </Provider>
-      </View>
+      <NativeBaseProvider>
+        <ActionSheetProvider>
+          <View style={[styles.container, { backgroundColor: bgValue }]}>
+            <Provider store={store}>
+              <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                  <Stack.Screen
+                    name="Login"
+                    component={LoginScreen}
+                    initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
+                  />
+                  <Stack.Screen
+                    name="Register"
+                    component={RegisterScreen}
+                    initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
+                  />
+                  <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                  />
+                  <Stack.Screen name="Select" component={SelectScreen}/>
+                </Stack.Navigator>
+              </NavigationContainer>
+            </Provider>
+          </View>
+        </ActionSheetProvider>
+      </NativeBaseProvider>
     );
   } else {
-    return (
-      <LoadingScreen />
-    )
+    return <LoadingScreen />;
   }
 }
 

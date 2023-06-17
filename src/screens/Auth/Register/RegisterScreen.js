@@ -4,19 +4,27 @@ import { GlobalStyles } from "../../../theme/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useNavigation } from "@react-navigation/native";
 
 const allSteps = 2;
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ route }) => {
+  const navigation = useNavigation();
   const [screenNumber, setScreenNumber] = useState(1);
   const [vendorData, setVendorData] = useState({
-    name: '',
-    description: ''
-  })
+    name: "",
+    description: "",
+    vendorName: "",
+    region: "",
+    city: "",
+    address: "",
+  });
+  const [avatar, setAvatar] = useState(require("../../../../assets/default_avatar.jpg"));
 
   useEffect(() => {
     console.log(vendorData);
-  }, [vendorData])
+  }, [vendorData]);
 
   function incrementHandler() {
     let currentNumber = screenNumber;
@@ -39,11 +47,24 @@ const RegisterScreen = () => {
   const CurrentScreen = () => {
     switch (screenNumber) {
       case 1:
-        return <Step1 vendorData={vendorData} setVendorData={setVendorData}/>;
+        return (
+          <Step1
+            route={route}
+            vendorData={vendorData}
+            setVendorData={setVendorData}
+            avatar={avatar}
+            setAvatar={setAvatar}
+          />
+        );
         break;
 
       case 2:
-        return <Step2 />;
+        return (
+          <Step2
+            vendorData={vendorData}
+            setVendorData={setVendorData}
+          />
+        );
 
       default:
         break;
@@ -56,9 +77,18 @@ const RegisterScreen = () => {
         <KeyboardAvoidingView>
           <View style={{ flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
             <View>
-              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 30, justifyContent: "center" }}>
-                <Text style={[GlobalStyles.title, { textAlign: "center", marginBottom: 0 }]}>Регистрация</Text>
-                <Text style={[GlobalStyles.text, { marginStart: 10 }]}> | шаг {screenNumber}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 30 }}>
+                <TouchableOpacity onPress={(() => {navigation.goBack()})}>
+                  <Ionicons name="arrow-back-circle-outline" size={30}/>
+                </TouchableOpacity>
+
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                  <Text style={[GlobalStyles.title, { textAlign: "center", marginBottom: 0 }]}>Регистрация</Text>
+                  <Text style={[GlobalStyles.text, { marginStart: 10 }]}> | шаг {screenNumber}</Text>
+                </View>
+
+                <View></View>
+
               </View>
 
               {CurrentScreen()}

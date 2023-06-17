@@ -4,7 +4,7 @@ import { paddingHorizontal, paddingVertical } from "../helpers/sizes";
 export const GlobalStyles = StyleSheet.create({
   container: {
     paddingHorizontal: paddingHorizontal,
-    paddingVertical: paddingVertical
+    paddingTop: paddingVertical
   },
   lightBtn: {
     flexDirection: "row",
@@ -31,8 +31,8 @@ export const GlobalStyles = StyleSheet.create({
   },
   textInput: {
     backgroundColor: "#fff",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 10,
     borderColor: "#dadada",
     borderWidth: 1,
@@ -58,4 +58,20 @@ export const GlobalStyles = StyleSheet.create({
     fontFamily: "Rubik-Medium",
     marginBottom: 30,
   },
+  selectBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cccccc'
+  },
+  optionItem: {
+    paddingVertical: 15,
+  },
+  disabledText: {
+    color: "#666666"
+  }
 });

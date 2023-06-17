@@ -4,7 +4,7 @@ import { GlobalStyles } from "../theme/styles";
 
 const CustomTextInput = ({ length, placeholder, setter, value, marginBottom, multiline }) => {
 
-  const [currentLength, setCurrentLength] = useState(value.length);
+  const [currentLength, setCurrentLength] = useState(value ? value.length : 0);
 
   function changeHandler(text){
     setCurrentLength(text.length)
