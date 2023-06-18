@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Text, Platform } from "react-native";
 import { GlobalStyles } from "../theme/styles";
 
-const CustomTextInput = ({ length, placeholder, setter, value, marginBottom, multiline }) => {
+const CustomTextInput = ({ length, placeholder, setter, value, marginBottom, multiline, keyboardType }) => {
 
   const [currentLength, setCurrentLength] = useState(value ? value.length : 0);
 
@@ -21,7 +21,7 @@ const CustomTextInput = ({ length, placeholder, setter, value, marginBottom, mul
   } else {
     return (
       <View style={{marginBottom: marginBottom}}>
-        <TextInput style={[GlobalStyles.textInput, {marginBottom: 5}]} placeholder={placeholder} onChangeText={changeHandler} maxLength={length} value={value}/>
+        <TextInput keyboardType={keyboardType} style={[GlobalStyles.textInput, {marginBottom: 5}]} placeholder={placeholder} onChangeText={changeHandler} maxLength={length} value={value}/>
         {length ? <Text style={{textAlign: 'right', color: '#5c5c5c'}}> {currentLength} / {length}</Text> : <View></View>}
       </View>
     );

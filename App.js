@@ -48,13 +48,13 @@ export default function App() {
               <NavigationContainer>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                   <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
+                    name="Register"
+                    component={RegisterScreen}
                     initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
                   />
                   <Stack.Screen
-                    name="Register"
-                    component={RegisterScreen}
+                    name="Login"
+                    component={LoginScreen}
                     initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
                   />
                   <Stack.Screen

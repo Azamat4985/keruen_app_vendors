@@ -24,6 +24,9 @@ export const GlobalStyles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
   },
+  disabledBtn: {
+    opacity: 0.5
+  },
   horizontalLine: {
     height: 1,
     backgroundColor: "#fff",
@@ -58,6 +61,10 @@ export const GlobalStyles = StyleSheet.create({
     fontFamily: "Rubik-Medium",
     marginBottom: 30,
   },
+  subtitle: {
+    fontSize: 24,
+    fontFamily: "Rubik-Medium",
+  },
   selectBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -73,5 +80,18 @@ export const GlobalStyles = StyleSheet.create({
   },
   disabledText: {
     color: "#666666"
-  }
+  },
+  codeInput: {
+    width: 60,
+    height: 60,
+    fontSize: 40,
+    borderWidth: 1,
+    borderColor: '#dadada',
+    borderRadius: 5,
+    textAlign: 'center',
+  },
+  codeFocus: {
+    borderWidth: 2,
+    borderColor: '#a1a1a1',
+  },
 });

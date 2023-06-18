@@ -6,21 +6,24 @@ import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
+import Step3 from "./Step3";
 
-const allSteps = 2;
+const allSteps = 3;
 
 const RegisterScreen = ({ route }) => {
   const navigation = useNavigation();
-  const [screenNumber, setScreenNumber] = useState(1);
+  const [screenNumber, setScreenNumber] = useState(3);
   const [vendorData, setVendorData] = useState({
     name: "",
     description: "",
     vendorName: "",
+    phone: '',
     region: "",
     city: "",
     address: "",
   });
   const [avatar, setAvatar] = useState(require("../../../../assets/default_avatar.jpg"));
+  const [phoneVerified, setPhoneVerified] = useState(true);
 
   useEffect(() => {
     console.log(vendorData);
@@ -63,6 +66,16 @@ const RegisterScreen = ({ route }) => {
           <Step2
             vendorData={vendorData}
             setVendorData={setVendorData}
+            phoneVerified={phoneVerified}
+            setPhoneVerified={setPhoneVerified}
+          />
+        );
+
+      case 3:
+        return (
+          <Step3
+            vendorData={vendorData}
+            setVendorData={setVendorData}
           />
         );
 
@@ -84,7 +97,7 @@ const RegisterScreen = ({ route }) => {
 
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                   <Text style={[GlobalStyles.title, { textAlign: "center", marginBottom: 0 }]}>Регистрация</Text>
-                  <Text style={[GlobalStyles.text, { marginStart: 10 }]}> | шаг {screenNumber}</Text>
+                  <Text style={[GlobalStyles.text, { marginStart: 10 }]}> | шаг {screenNumber}/{allSteps}</Text>
                 </View>
 
                 <View></View>
@@ -100,6 +113,7 @@ const RegisterScreen = ({ route }) => {
                   onPress={() => {
                     decrementHandler();
                   }}
+                  activeOpacity={0.7}
                 >
                   <Text style={[GlobalStyles.text]}>Упс, назад</Text>
                 </TouchableOpacity>
@@ -111,9 +125,11 @@ const RegisterScreen = ({ route }) => {
                 onPress={() => {
                   incrementHandler();
                 }}
-                style={[GlobalStyles.darkBtn, { width: 100 }]}
+                activeOpacity={0.7}
+                style={[GlobalStyles.darkBtn, { paddingHorizontal: 20 }, screenNumber == '2' && phoneVerified == false ? GlobalStyles.disabledBtn : '' ]}
+                disabled={screenNumber == '2' && phoneVerified == false ? true : false}
               >
-                <Text style={[GlobalStyles.text, { color: "#fff" }]}>Далее</Text>
+                <Text style={[GlobalStyles.text, { color: "#fff" }]}>{screenNumber == 3 ? 'Завершить' : 'Далее'}</Text>
               </TouchableOpacity>
             </View>
           </View>
