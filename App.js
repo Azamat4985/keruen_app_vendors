@@ -1,19 +1,16 @@
 import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./src/screens/HomeScreen";
 import store from "./src/store/store";
-import { Provider } from "react-redux";
-import LoginScreen from "./src/screens/Auth/LoginScreen";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import LoadingScreen from "./src/screens/LoadingScreen";
 import * as Font from "expo-font";
-import RegisterScreen from "./src/screens/Auth/Register/RegisterScreen";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
-import { NativeBaseProvider } from "native-base";
-import SelectScreen from "./src/screens/SelectScreen";
+import { initializeApp } from "firebase/app";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { firebaseConfig } from "firebaseConfig";
+import { child, get, getDatabase, ref } from "firebase/database";
+import AuthNavigation from "src/navigation/AuthNavigation";
 
 const Stack = createStackNavigator();
 const deviceWidth = Dimensions.get("window").width;
@@ -29,9 +26,9 @@ const fonts = () =>
   });
 
 export default function App() {
-  const [bgValue, setBgValue] = useState("#fff");
-  const [fontValue, setFontValue] = useState("#fff");
   const [fontsReady, setFontsReady] = useState(false);
+  const [appReady, setAppReady] = useState(false);
+  const [logged, setLogged] = useState(false);
 
   useEffect(() => {
     fonts().then(() => {
@@ -39,43 +36,22 @@ export default function App() {
     });
   }, []);
 
-  if (fontsReady) {
-    return (
-      <NativeBaseProvider>
-        <ActionSheetProvider>
-          <View style={[styles.container, { backgroundColor: bgValue }]}>
-            <Provider store={store}>
-              <NavigationContainer>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                  <Stack.Screen
-                    name="Register"
-                    component={RegisterScreen}
-                    initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
-                  />
-                  <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
-                    initialParams={{ contentWidth: contentWidth, bgValue: bgValue, fontValue: fontValue }}
-                  />
-                  <Stack.Screen
-                    name="Home"
-                    component={HomeScreen}
-                  />
-                  <Stack.Screen name="Select" component={SelectScreen}/>
-                </Stack.Navigator>
-              </NavigationContainer>
-            </Provider>
-          </View>
-        </ActionSheetProvider>
-      </NativeBaseProvider>
-    );
+  if (appReady && fontsReady) {
+    if (!logged) {
+      return (
+        <Provider store={store}>
+          <AuthNavigation contentWidth={contentWidth}/>
+        </Provider>
+      );
+    }
   } else {
-    return <LoadingScreen />;
+    return (
+      <Provider store={store}>
+        <LoadingScreen setAppReady={setAppReady} setLogged={setLogged}/>
+      </Provider>
+    );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
 });

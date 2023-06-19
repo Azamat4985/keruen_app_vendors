@@ -28,15 +28,27 @@ const Step1 = ({ vendorData, setVendorData, avatar, setAvatar, route }) => {
   }, [route.params?.city]);
 
   function nameHandler(text) {
-    setVendorData({ ...vendorData, name: text });
+    if (text.trim() != "" || vendorData.name.length == 1) {
+      setVendorData({ ...vendorData, name: text });
+    } else{
+      setVendorData({ ...vendorData, name: '' });
+    }
   }
 
   function addressHandler(text) {
-    setVendorData({ ...vendorData, address: text });
+    if (text.trim() != "" || vendorData.address.length == 1) {
+      setVendorData({ ...vendorData, address: text });
+    } else{
+      setVendorData({ ...vendorData, address: '' });
+    }
   }
 
   function descriptionHandler(text) {
-    setVendorData({ ...vendorData, description: text });
+    if (text.trim() != "" || vendorData.description.length == 1) {
+      setVendorData({ ...vendorData, description: text });
+    } else{
+      setVendorData({ ...vendorData, description: '' });
+    }
   }
 
   function selectHandler(type) {
@@ -190,7 +202,9 @@ const Step1 = ({ vendorData, setVendorData, avatar, setAvatar, route }) => {
             />
             <Text style={{ marginStart: 10, color: "#666666" }}>(46)</Text>
           </View>
-          <Text style={[GlobalStyles.smallText, { color: "#666666" }]}>{vendorData.city}, {vendorData.region}</Text>
+          <Text style={[GlobalStyles.smallText, { color: "#666666" }]}>
+            {vendorData.city}, {vendorData.region}
+          </Text>
         </View>
       </View>
     </View>

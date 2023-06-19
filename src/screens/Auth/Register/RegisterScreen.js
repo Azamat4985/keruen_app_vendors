@@ -12,7 +12,7 @@ const allSteps = 3;
 
 const RegisterScreen = ({ route }) => {
   const navigation = useNavigation();
-  const [screenNumber, setScreenNumber] = useState(3);
+  const [screenNumber, setScreenNumber] = useState(2);
   const [vendorData, setVendorData] = useState({
     name: "",
     description: "",
@@ -23,11 +23,24 @@ const RegisterScreen = ({ route }) => {
     address: "",
   });
   const [avatar, setAvatar] = useState(require("../../../../assets/default_avatar.jpg"));
-  const [phoneVerified, setPhoneVerified] = useState(true);
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
   useEffect(() => {
     console.log(vendorData);
   }, [vendorData]);
+
+  function canGoNext(){
+    if(screenNumber == 1){
+      if(vendorData.name == '' || vendorData.description == '' || vendorData.region == '' || vendorData.city == ''){
+        return false;
+      }
+    }
+    if(screenNumber == '2' && !phoneVerified){
+      return false;
+    }
+
+    return true;
+  }
 
   function incrementHandler() {
     let currentNumber = screenNumber;
@@ -126,8 +139,8 @@ const RegisterScreen = ({ route }) => {
                   incrementHandler();
                 }}
                 activeOpacity={0.7}
-                style={[GlobalStyles.darkBtn, { paddingHorizontal: 20 }, screenNumber == '2' && phoneVerified == false ? GlobalStyles.disabledBtn : '' ]}
-                disabled={screenNumber == '2' && phoneVerified == false ? true : false}
+                style={[GlobalStyles.darkBtn, { paddingHorizontal: 20 }, canGoNext() ?  '' : GlobalStyles.disabledBtn ]}
+                disabled={canGoNext() ? false : true}
               >
                 <Text style={[GlobalStyles.text, { color: "#fff" }]}>{screenNumber == 3 ? 'Завершить' : 'Далее'}</Text>
               </TouchableOpacity>

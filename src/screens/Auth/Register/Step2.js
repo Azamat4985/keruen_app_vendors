@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Keyboard, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Keyboard, ActivityIndicator, Alert } from "react-native";
 import { GlobalStyles } from "../../../theme/styles";
 import CustomTextInput from "../../../components/CustomTextInput";
 import PhoneInput from "react-native-phone-number-input";
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from "react-native-confirmation-code-field";
 import Modal from "react-native-modal";
 import { colors } from "src/theme/colors";
+import { serverRequest } from "src/helpers/serverRequests";
+import { useSelector } from "react-redux";
+import CustomPhoneInput from "src/components/CustomPhoneInput";
 
 const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) => {
   const [code, setCode] = useState("");
@@ -16,10 +19,15 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
     code,
     setCode,
   });
+  const [secondsLeft, setSecondsLeft] = useState("30");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  let serverUrl = useSelector((state) => state.settings.serverUrl);
 
   useEffect(() => {
     if (code.length == 4) {
       // something when code written
+      checkCodeHandler();
       setCodeChecking(true);
     }
   }, [code]);
@@ -28,14 +36,59 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
     setVendorData({ ...vendorData, vendorName: text });
   }
 
-  function vendorPhoneHandler(text) {
-    setVendorData({ ...vendorData, phone: text });
+  function vendorPhoneHandler(text, rawText) {
+    setVendorData({ ...vendorData, phone: rawText });
   }
 
-  function sendCodeHandler() {
-    setCodeSent(true);
-    Keyboard.dismiss();
+  useEffect(() => {
+    if (codeSent) {
+      let remainingSeconds = 30;
+
+      const countdownInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          if (remainingSeconds < 10) {
+            setSecondsLeft(`0${remainingSeconds}`);
+          } else {
+            setSecondsLeft(`${remainingSeconds}`);
+          }
+        } else {
+          setCodeSent(false);
+          console.log("Время истекло!");
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+    }
+  }, [codeSent]);
+
+  useEffect(() => {
+    console.log(secondsLeft);
+  }, [secondsLeft]);
+
+  async function sendCodeHandler() {
+    let response = await serverRequest(serverUrl, "/vendor/sendCode", "POST", { phone: vendorData.phone });
+    if (response.success) {
+      setCodeSent(true);
+      setModalVisible(true);
+      Keyboard.dismiss();
+      console.log(new Date());
+    }
+
     // send code action
+  }
+
+  async function checkCodeHandler() {
+    let response = await serverRequest(serverUrl, "/vendor/checkCode", "POST", { phone: vendorData.phone, code: code });
+    if (response.success) {
+      setPhoneVerified(true);
+      setModalVisible(false);
+      setCodeChecking(false);
+      setSecondsLeft('');
+      setCodeSent(true);
+    } else {
+      Alert.alert('Ошибка', response.error)
+      setCodeChecking(false)
+    }
   }
 
   return (
@@ -48,38 +101,48 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
         value={vendorData.vendorName}
         setter={vendorNameHanlder}
       />
+
       <Text style={[GlobalStyles.text, { marginBottom: 5 }]}>Ваш номер телефона</Text>
-      <PhoneInput
-        defaultCode="KZ"
-        textInputProps={{ keyboardType: "number-pad", placeholder: "Ваш номер телефона", maxLength: 10 }}
-        disableArrowIcon
-        onChangeText={(text) => {
-          vendorPhoneHandler(text);
-        }}
-        containerStyle={{ marginBottom: 20 }}
+      <CustomPhoneInput
+        value={vendorData.phone}
+        setter={vendorPhoneHandler}
       />
 
       <TouchableOpacity
-        style={[GlobalStyles.darkBtn, codeSent || vendorData.phone.length != 10 ? GlobalStyles.disabledBtn : "", { marginBottom: 10 }]}
-        disabled={codeSent || vendorData.phone.length != 10 ? true : false}
+        style={[GlobalStyles.darkBtn, codeSent || vendorData.phone.length < 10 || phoneVerified ? GlobalStyles.disabledBtn : "", { marginBottom: 10 }]}
+        disabled={codeSent || vendorData.phone.length < 10 || phoneVerified ? true : false}
         activeOpacity={0.7}
         onPress={() => {
           sendCodeHandler();
         }}
       >
-        <Text style={[GlobalStyles.text, { color: "#fff" }]}>Отправить смс</Text>
+        <Text style={[GlobalStyles.text, { color: "#fff" }]}>{!codeSent || phoneVerified ? "Отправить смс" : `00:${secondsLeft}`}</Text>
       </TouchableOpacity>
 
+      {codeSent && !phoneVerified ? (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <Text style={[GlobalStyles.text, { textAlign: "center" }]}>Ввести код</Text>
+        </TouchableOpacity>
+      ) : (
+        <View></View>
+      )}
+
+      {phoneVerified ? <Text style={[GlobalStyles.text, { textAlign: "center", color: '#5cb85c' }]}>Телефон потдвержден ✅</Text> : <View></View>}
+
       <Modal
-        isVisible={codeSent}
-        onBackdropPress={() => setCodeSent(false)}
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
       >
         <View>
           <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
             <Text style={[GlobalStyles.subtitle, { marginBottom: 20, textAlign: "center" }]}>Введите код</Text>
-            <Text style={[GlobalStyles.text, {color: colors.danger, marginBottom: 20, textAlign: 'center'}]}>sdfsd</Text>
             {codeChecking ? (
-              <View style={{marginBottom: 20}}>
+              <View style={{ marginBottom: 20 }}>
                 <ActivityIndicator size={"large"} />
               </View>
             ) : (
