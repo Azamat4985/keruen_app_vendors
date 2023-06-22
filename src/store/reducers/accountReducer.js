@@ -14,10 +14,13 @@ export const accountSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
     },
+    setAccountData: (state, action) => {
+      state.accountData = action.payload
+    }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { changeLogged, setToken } = accountSlice.actions;
+export const { changeLogged, setToken, setAccountData } = accountSlice.actions;
 
 export default accountSlice.reducer;

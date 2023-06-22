@@ -2,32 +2,39 @@ export async function checkTokenServer(serverUrl, token) {
   let result;
   let formData = new FormData();
   formData.append("token", token);
-  await fetch(serverUrl, {
+  await fetch(`${serverUrl}/vendor/checkToken`, {
     method: "POST",
     body: formData,
   })
     .then(async (res) => {
-      result = { result: true, data: await res.json() };
+      result = await res.json();
     })
-    .catch((error) => {
+    .catch(async (error) => {
       // result = { result: false, msg: "Нет соединения с сервером. Попробуйте еще раз" };
-      result = { result: true, data: {success: false} };
+      result = await res.json();
     });
 
   return result;
 }
 
-export async function serverRequest(serverUrl, path, method, data){
-  let formData = new FormData();
-  for (const key in data) {
-    formData.append(key, data[key])
-  }
+export async function serverRequest(serverUrl, path, method, formData) {
   let result;
-  await fetch(serverUrl + path, {
-    method: method,
-    body: formData
-  }).then(async (res) => {
-    result = await res.json();
-  })
+  if (method.toUpperCase() == "POST") {
+    await fetch(serverUrl + path, {
+      method: method,
+      body: formData,
+    }).then(async (res) => {
+      result = await res.json();
+    });
+  } else if(method.toUpperCase() == "GET") {
+    await fetch(serverUrl + path, {
+      method: method,
+    }).then(async (res) => {
+      result = await res.json();
+    }).catch((error) => {
+      return {success: false}
+    })
+  }
+
   return result;
 }

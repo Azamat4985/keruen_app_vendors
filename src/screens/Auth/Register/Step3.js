@@ -5,13 +5,15 @@ import { GlobalStyles } from "src/theme/styles";
 
 const Step3 = ({ vendorData, setVendorData }) => {
 
-  const [confirmPass, setConfirmPass] = useState('')
 
   function emailHandler(text) {
     setVendorData({...vendorData, email: text})
   }
   function passwordHandler(text) {
     setVendorData({...vendorData, password: text})
+  }
+  function confirmPasswordHandler(text){
+    setVendorData({...vendorData, confirmPassword: text})
   }
 
   return (
@@ -24,6 +26,9 @@ const Step3 = ({ vendorData, setVendorData }) => {
         value={vendorData.email}
         setter={emailHandler}
         keyboardType='email-address'
+        rule="email"
+        failText="Email не корректен"
+        capitalize={false}
       />
 
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10, marginBottom: 20 }}>
@@ -33,18 +38,25 @@ const Step3 = ({ vendorData, setVendorData }) => {
       <Text style={[GlobalStyles.text, { marginBottom: 5 }]}>Придумайте пароль</Text>
       <CustomTextInput
         length={50}
-        placeholder={"Введите Ваш email"}
+        placeholder={"Введите пароль"}
         marginBottom={10}
         value={vendorData.password}
         setter={passwordHandler}
+        rule='password'
+        failText='Пароль должен состоять из 8 символов и иметь минимум 1 цифру'
+        capitalize={false}
       />
       <Text style={[GlobalStyles.text, { marginBottom: 5 }]}>Введите пароль еще раз</Text>
       <CustomTextInput
         length={50}
-        placeholder={"Введите Ваш email"}
+        placeholder={"Введите пароль еще раз"}
         marginBottom={10}
-        value={confirmPass}
-        setter={setConfirmPass}
+        value={vendorData.confirmPassword}
+        setter={confirmPasswordHandler}
+        rule='confirmPassword'
+        vendorData={vendorData}
+        failText='Пароли не совпадают'
+        capitalize={false}
       />
     </View>
   );

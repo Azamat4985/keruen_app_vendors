@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider, useSelector } from "react-redux";
@@ -11,8 +11,7 @@ import SelectScreen from "src/screens/SelectScreen";
 
 const Stack = createStackNavigator();
 
-const AuthNavigation = ({ contentWidth }) => {
-
+const AuthNavigation = ({ contentWidth, setLogged }) => {
   return (
     <NativeBaseProvider>
       <ActionSheetProvider>
@@ -22,12 +21,12 @@ const AuthNavigation = ({ contentWidth }) => {
               <Stack.Screen
                 name="Login"
                 component={LoginScreen}
-                initialParams={{ contentWidth: contentWidth, bgValue: "#fff" }}
+                initialParams={{ contentWidth: contentWidth, bgValue: "#fff", setLogged: setLogged }}
               />
               <Stack.Screen
                 name="Register"
                 component={RegisterScreen}
-                initialParams={{ contentWidth: contentWidth, bgValue: "#fff" }}
+                initialParams={{ contentWidth: contentWidth, bgValue: "#fff", setLogged: setLogged }}
               />
               <Stack.Screen
                 name="Select"
@@ -43,7 +42,8 @@ const AuthNavigation = ({ contentWidth }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    height: '100%'
   },
 });
 

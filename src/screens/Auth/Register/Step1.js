@@ -9,7 +9,7 @@ import { colors } from "../../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
 import locations, { regions } from "../../../helpers/regions";
 
-const Step1 = ({ vendorData, setVendorData, avatar, setAvatar, route }) => {
+const Step1 = ({ vendorData, setVendorData, avatar, setAvatar, route, setAvatarData }) => {
   const navigation = useNavigation();
   const { showActionSheetWithOptions } = useActionSheet();
   const [open, setOpen] = useState(false);
@@ -98,10 +98,12 @@ const Step1 = ({ vendorData, setVendorData, avatar, setAvatar, route }) => {
             });
 
             setAvatar({ uri: result.assets[0].uri });
+            setAvatarData(result.assets[0])
             break;
 
           case destructiveButtonIndex:
             setAvatar(require("../../../../assets/default_avatar.jpg"));
+            setAvatarData(null)
             break;
 
           case cancelButtonIndex:

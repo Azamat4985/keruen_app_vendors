@@ -36,8 +36,8 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
     setVendorData({ ...vendorData, vendorName: text });
   }
 
-  function vendorPhoneHandler(text, rawText) {
-    setVendorData({ ...vendorData, phone: rawText });
+  function vendorPhoneHandler(text) {
+    setVendorData({ ...vendorData, phone: text });
   }
 
   useEffect(() => {
@@ -66,19 +66,24 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
   }, [secondsLeft]);
 
   async function sendCodeHandler() {
-    let response = await serverRequest(serverUrl, "/vendor/sendCode", "POST", { phone: vendorData.phone });
+    let formData = new FormData();
+    formData.append('phone', vendorData.phone)
+    let response = await serverRequest(serverUrl, "/vendor/sendCode", "POST", formData);
     if (response.success) {
       setCodeSent(true);
       setModalVisible(true);
       Keyboard.dismiss();
-      console.log(new Date());
+      console.log(vendorData.phone);
     }
 
     // send code action
   }
 
   async function checkCodeHandler() {
-    let response = await serverRequest(serverUrl, "/vendor/checkCode", "POST", { phone: vendorData.phone, code: code });
+    let formData = new FormData();
+    formData.append('phone', vendorData.phone)
+    formData.append('code', code)
+    let response = await serverRequest(serverUrl, "/vendor/checkCode", "POST", formData);
     if (response.success) {
       setPhoneVerified(true);
       setModalVisible(false);
@@ -96,7 +101,7 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
       <Text style={[GlobalStyles.text, { marginBottom: 5 }]}>Как Вас зовут?</Text>
       <CustomTextInput
         length={30}
-        placeholder={"Введите Ваше имя"}
+        refs={{placeholder: 'text'}}
         marginBottom={10}
         value={vendorData.vendorName}
         setter={vendorNameHanlder}
@@ -132,7 +137,7 @@ const Step2 = ({ vendorData, setVendorData, phoneVerified, setPhoneVerified }) =
         <View></View>
       )}
 
-      {phoneVerified ? <Text style={[GlobalStyles.text, { textAlign: "center", color: '#5cb85c' }]}>Телефон потдвержден ✅</Text> : <View></View>}
+      {phoneVerified ? <Text style={[GlobalStyles.text, { textAlign: "center", color: '#5cb85c' }]}>Телефон подтвержден ✅</Text> : <View></View>}
 
       <Modal
         isVisible={modalVisible}
